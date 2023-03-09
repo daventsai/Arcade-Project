@@ -1,19 +1,15 @@
 const gameDisplay = document.querySelector('.game-title');
 const gameBoard = document.querySelector('.board');
-
 const p1Display = document.querySelector('.p1');
 const p2Display = document.querySelector('.p2');
-// Will change shortly depending on which game it's on, but for now, hard code
-gameDisplay.innerText = 'Tic Tac Toe';
+const p1Score = document.querySelector('.p1-score');
+const p2Score = document.querySelector('.p2-score');
+let boardSize;
 let turn = 0;
 let playerAssignment = '';
 const gameState = {
   players: ['X', 'O'],
-  board: [
-    [null, null, null],
-    [null, null, null],
-    [null, null, null]
-  ]
+  board: []
 }
 const players = [
   {
@@ -27,8 +23,25 @@ const players = [
     symbol: ''
   }
 ]
+gameDisplay.innerText = 'Tic Tac Toe';
   
   function makeBoard(){
+    let correctSize = false;
+    do{
+      boardSize = prompt("What board size board would you like (enter a whole number)?");
+      if (!isNaN(boardSize)){
+        correctSize = true;
+        break;
+      }
+    } while (!correctSize);
+
+    for (let i=0;i<boardSize;i++){
+      gameState.board.push([]);
+      for (let j=0;j<boardSize;j++){
+        gameState.board[i].push(null);
+      }
+    }
+    document.querySelector(".board").style.gridTemplate = `repeat(${gameState.board.length},1fr)/repeat(${gameState.board.length},1fr)`;
     for (let i=0;i<gameState.board.length; i++){
       for (let j=0;j<gameState.board.length;j++){
         const square = document.createElement("div");
@@ -45,23 +58,31 @@ playerSelector1.addEventListener('click',gameSetup);
 playerSelector2.addEventListener('click',gameSetup);
 function gameSetup(event){
     playerAssignment = gameState.players[Math.floor(Math.random()*2)];
+    players[0].symbol = playerAssignment;
+    if (playerAssignment === 'X'){
+      players[1].symbol = 'O';
+    }
+    else{
+      players[1].symbol = 'X';
+    }
     console.log(event.target.id);
     if (event.target.id === "P1"){
-      console.log('single player game, you are: ', playerAssignment);
       players[0].name = prompt("What is Player 1's name?");
       players[1].name = "Computer";
     }
     else{
-      console.log('2 player game, player one is:  ', playerAssignment);
       players[0].name = prompt("What is Player 1's name?");
       players[1].name = prompt("What is Player 2's name?");
     }
-    p1Display.innerText = players[0].name;
-    p2Display.innerText = players[1].name;
+    p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
+    p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
+    p1Score.innerText = 'Wins: ' + players[0].wins;
+    p2Score.innerText = 'Wins: ' + players[1].wins;
     makeBoard();
     document.querySelector(".player-container").style.display = 'none';
     document.querySelector(".board").style.visibility = 'visible';
     document.querySelector(".player-position").style.visibility = 'visible';
+    document.querySelector(".scores").style.visibility = 'visible';
 }
 
 
@@ -95,7 +116,7 @@ function changePlayers(){
 
 function evalWinCondition(){
 //Row Win
-let boardLen = gameState.board.length;
+  let boardLen = gameState.board.length;
   let gameWon = false;
   for (let i=0;i<boardLen;i++){
     let rowCalc = 0;
@@ -107,11 +128,9 @@ let boardLen = gameState.board.length;
         rowCalc--;
       }
       if (rowCalc === boardLen && gameWon === false){
-        alert("Player X Wins!");
         gameWon = true;
       }
       else if (rowCalc === -boardLen && gameWon === false){
-        alert("Player O Wins!");
         gameWon = true;
       }
     }
@@ -127,27 +146,13 @@ let boardLen = gameState.board.length;
         colCalc--;
       }
       if (colCalc === boardLen && gameWon === false){
-        alert("Player X Wins!");
         gameWon = true;
       }
       else if (colCalc === -boardLen && gameWon === false){
-        alert("Player O Wins!");
         gameWon = true;
       }
     }
   }
-  //Diagonal Win Old
-  // if ((gameState.board[0][0] + gameState.board[1][1] + gameState.board[2][2] === 'XXX' ||
-  //     gameState.board[0][2] + gameState.board[1][1] + gameState.board[2][0] === 'XXX') && gameWon === false){
-  //   alert("Player X Wins!");
-  //   gameWon = true;
-  // }
-  // else if ((gameState.board[0][0] + gameState.board[1][1] + gameState.board[2][2] === 'OOO' ||
-  //         gameState.board[0][2] + gameState.board[1][1] + gameState.board[2][0] === 'OOO') && gameWon === false){
-  //   alert("Player O Wins!");
-  //   gameWon = true;
-  // }
-
   //Diagonal Win New
   let diagCalc1 = 0;
   let diagCalc2 = 0;
@@ -174,23 +179,37 @@ let boardLen = gameState.board.length;
         diagCalc2--;
       }
       if (diagCalc1 === boardLen && gameWon === false){
-        alert("Player X Wins!");
         gameWon = true;
       }
       else if (diagCalc1 === -boardLen && gameWon === false){
-        alert("Player O Wins!");
         gameWon = true;
       }
       else if (diagCalc2 === boardLen && gameWon === false){
-        alert("Player X Wins!");
         gameWon = true;
       }
       else if (diagCalc2 === -boardLen && gameWon === false){
-        alert("Player O Wins!");
         gameWon = true;
       }
     }
   }
+  if (gameWon === true){
+    if (players[0].symbol === playerAssignment){
+      players[0].wins++;
+      p1Score.innerText = 'Wins: '+ players[0].wins;
+      setTimeout(()=>{
+        alert(`${players[0].name} Wins!`);
+      },10);
+      
+    }
+    else{
+      players[1].wins++;
+      p2Score.innerText = 'Wins: '+ players[1].wins;
+      setTimeout(()=>{
+        alert(`${players[1].name} Wins!`);
+      },10);
+    }
+  }
+
   //Check ties
   if (gameWon === false){
     let emptySquares = boardLen*boardLen;

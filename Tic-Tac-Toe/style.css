@@ -23,6 +23,9 @@ body{
 .player-container{
     padding:1rem;
 }
+.player-select{
+    margin:2rem;
+}
 .pregame-prompt{
     color: white;
     font-family: 'Silkscreen', cursive;
@@ -36,7 +39,6 @@ body{
 }
 .board{
     display: grid;
-    grid-template: repeat(3,1fr)/repeat(3,1fr);
     background-color: rgb(51, 56, 67);
     height: 500px;
     width: 500px;
@@ -64,4 +66,29 @@ body{
     margin-top: 1rem;
     margin-left: 1rem;
     margin-right: 1rem;
+}
+.scores{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    visibility: hidden;
+}
+.scores *{
+    color: white;
+    font-family: 'Silkscreen', cursive;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+.pop-up{
+    position: fixed;
+    right: 35%;
+    left: 35%;
+    width: 30%;
+    top:20%;
+    height: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
