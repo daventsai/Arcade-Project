@@ -4,7 +4,6 @@ const gameBoard = document.querySelector('.board');
 gameDisplay.innerText = 'Tic Tac Toe';
 let turn = 0;
 let playerAssignment = '';
-//*******Need to do something here********/
 const gameState = {
     players: ['X', 'O'],
     board: [
@@ -72,62 +71,107 @@ function changePlayers(){
 
 function evalWinCondition(){
 //Row Win
+let boardLen = gameState.board.length;
   let gameWon = false;
-  for (let i=0;i<gameState.board.length;i++){
+  for (let i=0;i<boardLen;i++){
     let rowCalc = 0;
-    for (let j=0;j<gameState.board.length;j++){
+    for (let j=0;j<boardLen;j++){
       if (gameState.board[i][j]==='X'){
         rowCalc++;
       }
       else if (gameState.board[i][j]==='O'){
         rowCalc--;
       }
-      if (rowCalc === gameState.board.length && gameWon === false){
+      if (rowCalc === boardLen && gameWon === false){
         alert("Player X Wins!");
         gameWon = true;
       }
-      else if (rowCalc === -gameState.board.length && gameWon === false){
+      else if (rowCalc === -boardLen && gameWon === false){
         alert("Player O Wins!");
         gameWon = true;
       }
     }
   }
   //Column Win
-  for (let i=0;i<gameState.board.length;i++){
+  for (let i=0;i<boardLen;i++){
     let colCalc = 0;
-    for (let j=0;j<gameState.board.length;j++){
+    for (let j=0;j<boardLen;j++){
       if (gameState.board[j][i]==='X'){
         colCalc++;
       }
       else if (gameState.board[j][i]==='O'){
         colCalc--;
       }
-      if (colCalc === gameState.board.length && gameWon === false){
+      if (colCalc === boardLen && gameWon === false){
         alert("Player X Wins!");
         gameWon = true;
       }
-      else if (colCalc === -gameState.board.length && gameWon === false){
+      else if (colCalc === -boardLen && gameWon === false){
         alert("Player O Wins!");
         gameWon = true;
       }
     }
   }
-  //Diagonal Win
-  if ((gameState.board[0][0] + gameState.board[1][1] + gameState.board[2][2] === 'XXX' ||
-      gameState.board[0][2] + gameState.board[1][1] + gameState.board[2][0] === 'XXX') && gameWon === false){
-    alert("Player X Wins!");
-    gameWon = true;
-  }
-  else if ((gameState.board[0][0] + gameState.board[1][1] + gameState.board[2][2] === 'OOO' ||
-          gameState.board[0][2] + gameState.board[1][1] + gameState.board[2][0] === 'OOO') && gameWon === false){
-    alert("Player O Wins!");
-    gameWon = true;
+  //Diagonal Win Old
+  // if ((gameState.board[0][0] + gameState.board[1][1] + gameState.board[2][2] === 'XXX' ||
+  //     gameState.board[0][2] + gameState.board[1][1] + gameState.board[2][0] === 'XXX') && gameWon === false){
+  //   alert("Player X Wins!");
+  //   gameWon = true;
+  // }
+  // else if ((gameState.board[0][0] + gameState.board[1][1] + gameState.board[2][2] === 'OOO' ||
+  //         gameState.board[0][2] + gameState.board[1][1] + gameState.board[2][0] === 'OOO') && gameWon === false){
+  //   alert("Player O Wins!");
+  //   gameWon = true;
+  // }
+
+  //Diagonal Win New
+  let diagCalc1 = 0;
+  let diagCalc2 = 0;
+  for (let i=0;i<boardLen;i++){
+    for (let j=0;j<boardLen;j++){
+      if (gameState.board[i][j] === "X" && i===j && i===boardLen-j-1){
+        diagCalc1++;
+        diagCalc2++;
+      }
+      else if (gameState.board[i][j] ==="X" && i===j){
+        diagCalc1++;
+      }
+      else if (gameState.board[i][j] === "X" && i===boardLen-j-1){
+        diagCalc2++;
+      }
+      else if (gameState.board[i][j] === "O" && i===j && i===boardLen-j-1){
+        diagCalc1--;
+        diagCalc2--;
+      }
+      else if (gameState.board[i][j] ==="O" && i===j){
+        diagCalc1--;
+      }
+      else if (gameState.board[i][j] === "O" && i===boardLen-j-1){
+        diagCalc2--;
+      }
+      if (diagCalc1 === boardLen && gameWon === false){
+        alert("Player X Wins!");
+        gameWon = true;
+      }
+      else if (diagCalc1 === -boardLen && gameWon === false){
+        alert("Player O Wins!");
+        gameWon = true;
+      }
+      else if (diagCalc2 === boardLen && gameWon === false){
+        alert("Player X Wins!");
+        gameWon = true;
+      }
+      else if (diagCalc2 === -boardLen && gameWon === false){
+        alert("Player O Wins!");
+        gameWon = true;
+      }
+    }
   }
   //Check ties
   if (gameWon === false){
-    let emptySquares = 9;
-    for (let i=0;i<gameState.board.length; i++){
-      for (let j=0;j<gameState.board.length; j++){
+    let emptySquares = boardLen*boardLen;
+    for (let i=0;i<boardLen; i++){
+      for (let j=0;j<boardLen; j++){
         if (gameState.board[i][j]!==null){
           emptySquares--;
         }
