@@ -50,3 +50,16 @@ body{
     align-items: center;
     color: white;
 }
+.player-position{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    
+}
+.player-position *{
+    color: white;
+    font-family: 'Silkscreen', cursive;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}

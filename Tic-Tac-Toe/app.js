@@ -1,17 +1,32 @@
 const gameDisplay = document.querySelector('.game-title');
 const gameBoard = document.querySelector('.board');
+
+const p1Display = document.querySelector('.p1');
+const p2Display = document.querySelector('.p2');
 // Will change shortly depending on which game it's on, but for now, hard code
 gameDisplay.innerText = 'Tic Tac Toe';
 let turn = 0;
 let playerAssignment = '';
 const gameState = {
-    players: ['X', 'O'],
-    board: [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null]
-    ]
+  players: ['X', 'O'],
+  board: [
+    [null, null, null],
+    [null, null, null],
+    [null, null, null]
+  ]
+}
+const players = [
+  {
+    name: '',
+    wins: 0,
+    symbol: ''
+  },
+  {
+    name: '',
+    wins: 0,
+    symbol: ''
   }
+]
   
   function makeBoard(){
     for (let i=0;i<gameState.board.length; i++){
@@ -34,10 +49,16 @@ function gameSetup(event){
     console.log(event.target.id);
     if (event.target.id === "P1"){
       console.log('single player game, you are: ', playerAssignment);
+      players[0].name = prompt("What is Player 1's name?");
+      players[1].name = "Computer";
     }
     else{
       console.log('2 player game, player one is:  ', playerAssignment);
+      players[0].name = prompt("What is Player 1's name?");
+      players[1].name = prompt("What is Player 2's name?");
     }
+    p1Display.innerText = players[0].name;
+    p2Display.innerText = players[1].name;
 }
 
 
