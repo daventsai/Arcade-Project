@@ -38,7 +38,6 @@ const players = [
       }
     }
   }
-  makeBoard();
 
 const playerSelector1 = document.querySelector('#P1');
 const playerSelector2 = document.querySelector('#P2');
@@ -59,6 +58,10 @@ function gameSetup(event){
     }
     p1Display.innerText = players[0].name;
     p2Display.innerText = players[1].name;
+    makeBoard();
+    document.querySelector(".player-container").style.display = 'none';
+    document.querySelector(".board").style.visibility = 'visible';
+    document.querySelector(".player-position").style.visibility = 'visible';
 }
 
 

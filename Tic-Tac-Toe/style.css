@@ -41,6 +41,7 @@ body{
     height: 500px;
     width: 500px;
     margin:1rem;
+    visibility: hidden;
 }
 .box{
     display:flex;
@@ -55,11 +56,12 @@ body{
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    
+    visibility: hidden;
 }
 .player-position *{
     color: white;
     font-family: 'Silkscreen', cursive;
+    margin-top: 1rem;
     margin-left: 1rem;
     margin-right: 1rem;
 }
