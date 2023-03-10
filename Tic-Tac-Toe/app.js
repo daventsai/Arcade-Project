@@ -7,6 +7,7 @@ const p2Score = document.querySelector('.p2-score');
 let boardSize;
 let turn = 0;
 let playerAssignment = '';
+let gameWon = false;
 const gameState = {
   players: ['X', 'O'],
   board: []
@@ -91,7 +92,7 @@ gameBoard.addEventListener('click',fillInSquare);
 function fillInSquare(event){
     const target = event.target;
     console.log(target.innerText);
-    if (target.innerText === ''){
+    if (target.innerText === '' && gameWon===false){
         const tempSquarePosition = target.id;
         target.innerText = playerAssignment;
         turn++;
@@ -100,7 +101,7 @@ function fillInSquare(event){
         evalWinCondition();
         changePlayers();
     }
-    else{
+    else if ((target.innerText === 'X' || target.innerText === 'O') && gameWon ===false){
         window.alert("The square is already filled in!");
     }
 }
@@ -117,7 +118,6 @@ function changePlayers(){
 function evalWinCondition(){
 //Row Win
   let boardLen = gameState.board.length;
-  let gameWon = false;
   for (let i=0;i<boardLen;i++){
     let rowCalc = 0;
     for (let j=0;j<boardLen;j++){
@@ -199,7 +199,6 @@ function evalWinCondition(){
       setTimeout(()=>{
         alert(`${players[0].name} Wins!`);
       },10);
-      
     }
     else{
       players[1].wins++;
@@ -221,8 +220,13 @@ function evalWinCondition(){
       }
     }
     if (emptySquares ===0){
-      alert("There is a tie");
+      setTimeout(()=>{
+        alert(`There is a tie!`);
+      },10);
       gameWon = true;
     }
+  }
+  if (gameWon === true){
+    document.querySelector('.pop-up').style.visibility = 'visible';
   }
 }

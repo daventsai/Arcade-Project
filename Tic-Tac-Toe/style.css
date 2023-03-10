@@ -85,10 +85,11 @@ body{
     right: 35%;
     left: 35%;
     width: 30%;
-    top:20%;
+    top:35%;
     height: 5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    visibility: hidden;
 }
