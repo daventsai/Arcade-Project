@@ -4,6 +4,9 @@ const p1Display = document.querySelector('.p1');
 const p2Display = document.querySelector('.p2');
 const p1Score = document.querySelector('.p1-score');
 const p2Score = document.querySelector('.p2-score');
+const dial = document.querySelector('.pop-up');
+const playAgainButton = document.querySelector('#playAgain');
+const resetButton = document.querySelector('#reset');
 let boardSize;
 let turn = 0;
 let playerAssignment = '';
@@ -26,7 +29,7 @@ const players = [
 ]
 gameDisplay.innerText = 'Tic Tac Toe';
   
-  function makeBoard(){
+  function askSize(){
     let correctSize = false;
     do{
       boardSize = prompt("What board size board would you like (enter a whole number)?");
@@ -35,7 +38,9 @@ gameDisplay.innerText = 'Tic Tac Toe';
         break;
       }
     } while (!correctSize);
-
+    makeBoard();
+  }
+  function makeBoard(){
     for (let i=0;i<boardSize;i++){
       gameState.board.push([]);
       for (let j=0;j<boardSize;j++){
@@ -58,32 +63,34 @@ const playerSelector2 = document.querySelector('#P2');
 playerSelector1.addEventListener('click',gameSetup);
 playerSelector2.addEventListener('click',gameSetup);
 function gameSetup(event){
-    playerAssignment = gameState.players[Math.floor(Math.random()*2)];
-    players[0].symbol = playerAssignment;
-    if (playerAssignment === 'X'){
-      players[1].symbol = 'O';
-    }
-    else{
-      players[1].symbol = 'X';
-    }
-    console.log(event.target.id);
-    if (event.target.id === "P1"){
-      players[0].name = prompt("What is Player 1's name?");
-      players[1].name = "Computer";
-    }
-    else{
-      players[0].name = prompt("What is Player 1's name?");
-      players[1].name = prompt("What is Player 2's name?");
-    }
-    p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
-    p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
-    p1Score.innerText = 'Wins: ' + players[0].wins;
-    p2Score.innerText = 'Wins: ' + players[1].wins;
-    makeBoard();
-    document.querySelector(".player-container").style.display = 'none';
-    document.querySelector(".board").style.visibility = 'visible';
-    document.querySelector(".player-position").style.visibility = 'visible';
-    document.querySelector(".scores").style.visibility = 'visible';
+  assignPlayerRole();
+  if (event.target.id === "P1"){
+    players[0].name = prompt("What is Player 1's name?");
+    players[1].name = "Computer";
+  }
+  else{
+    players[0].name = prompt("What is Player 1's name?");
+    players[1].name = prompt("What is Player 2's name?");
+  }
+  p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
+  p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
+  p1Score.innerText = 'Wins: ' + players[0].wins;
+  p2Score.innerText = 'Wins: ' + players[1].wins;
+  askSize();
+  document.querySelector(".player-container").style.display = 'none';
+  document.querySelector(".board").style.visibility = 'visible';
+  document.querySelector(".player-position").style.visibility = 'visible';
+  document.querySelector(".scores").style.visibility = 'visible';
+}
+function assignPlayerRole(){
+  playerAssignment = gameState.players[Math.floor(Math.random()*2)];
+  players[0].symbol = playerAssignment;
+  if (playerAssignment === 'X'){
+    players[1].symbol = 'O';
+  }
+  else{
+    players[1].symbol = 'X';
+  }
 }
 
 
@@ -227,6 +234,19 @@ function evalWinCondition(){
     }
   }
   if (gameWon === true){
-    document.querySelector('.pop-up').style.visibility = 'visible';
+    dial.show();
   }
 }
+
+playAgainButton.addEventListener("click",()=>{
+  gameState.board = [];
+  const squares = document.getElementsByClassName("box");
+  while(squares.length > 0){
+    squares[0].parentNode.removeChild(squares[0]);
+  }
+  assignPlayerRole();
+  p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
+  p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
+  makeBoard();
+  gameWon = false;
+});
