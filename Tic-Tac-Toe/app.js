@@ -7,8 +7,9 @@ const p2Score = document.querySelector('.p2-score');
 const dial = document.querySelector('.pop-up');
 const playAgainButton = document.querySelector('#playAgain');
 const resetButton = document.querySelector('#reset');
+const turnText = document.querySelector('.turn');
 let boardSize;
-let turn = 0;
+let turn = 1;
 let playerAssignment = '';
 let gameWon = false;
 const gameState = {
@@ -28,59 +29,19 @@ const players = [
   }
 ]
 gameDisplay.innerText = 'Tic Tac Toe';
-  
-  function askSize(){
-    let correctSize = false;
-    do{
-      boardSize = prompt("What board size board would you like (enter a whole number)?");
-      if (!isNaN(boardSize)){
-        correctSize = true;
-        break;
-      }
-    } while (!correctSize);
-    makeBoard();
-  }
-  function makeBoard(){
-    for (let i=0;i<boardSize;i++){
-      gameState.board.push([]);
-      for (let j=0;j<boardSize;j++){
-        gameState.board[i].push(null);
-      }
-    }
-    document.querySelector(".board").style.gridTemplate = `repeat(${gameState.board.length},1fr)/repeat(${gameState.board.length},1fr)`;
-    for (let i=0;i<gameState.board.length; i++){
-      for (let j=0;j<gameState.board.length;j++){
-        const square = document.createElement("div");
-        square.className ='box';
-        square.id = `${i}${j}`;
-        gameBoard.appendChild(square);
-      }
-    }
-  }
-
 const playerSelector1 = document.querySelector('#P1');
 const playerSelector2 = document.querySelector('#P2');
 playerSelector1.addEventListener('click',gameSetup);
 playerSelector2.addEventListener('click',gameSetup);
+
 function gameSetup(event){
   assignPlayerRole();
-  if (event.target.id === "P1"){
-    players[0].name = prompt("What is Player 1's name?");
-    players[1].name = "Computer";
-  }
-  else{
-    players[0].name = prompt("What is Player 1's name?");
-    players[1].name = prompt("What is Player 2's name?");
-  }
-  p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
-  p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
-  p1Score.innerText = 'Wins: ' + players[0].wins;
-  p2Score.innerText = 'Wins: ' + players[1].wins;
+  promptPlayer(event);
   askSize();
   document.querySelector(".player-container").style.display = 'none';
-  document.querySelector(".board").style.visibility = 'visible';
-  document.querySelector(".player-position").style.visibility = 'visible';
-  document.querySelector(".scores").style.visibility = 'visible';
+  document.querySelector(".board").style.display = 'grid';
+  document.querySelector(".player-position").style.display = 'flex';
+  document.querySelector(".scores").style.display = 'flex';
 }
 function assignPlayerRole(){
   playerAssignment = gameState.players[Math.floor(Math.random()*2)];
@@ -92,27 +53,74 @@ function assignPlayerRole(){
     players[1].symbol = 'X';
   }
 }
-
-
+function promptPlayer(event){
+  if (event.target.id === "P1"){
+    players[0].name = prompt("What is Player 1's name?");
+    players[1].name = "Computer";
+  }
+  else{
+    players[0].name = prompt("What is Player 1's name?");
+    players[1].name = prompt("What is Player 2's name?");
+  }
+  players[0].wins = 0;
+  players[1].wins = 0;
+  p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
+  p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
+  p1Score.innerText = 'Wins: ' + players[0].wins;
+  p2Score.innerText = 'Wins: ' + players[1].wins;
+}
+function askSize(){
+  let correctSize = false;
+  do{
+    boardSize = prompt("What board size board would you like (enter a whole number)?");
+    if (!isNaN(boardSize)){
+      correctSize = true;
+      break;
+    }
+  } while (!correctSize);
+  makeBoard();
+}
+function makeBoard(){
+  for (let i=0;i<boardSize;i++){
+    gameState.board.push([]);
+    for (let j=0;j<boardSize;j++){
+      gameState.board[i].push(null);
+    }
+  }
+  document.querySelector(".board").style.gridTemplate = `repeat(${gameState.board.length},1fr)/repeat(${gameState.board.length},1fr)`;
+  for (let i=0;i<gameState.board.length; i++){
+    for (let j=0;j<gameState.board.length;j++){
+      const square = document.createElement("div");
+      square.className ='box';
+      square.id = `${i}${j}`;
+      gameBoard.appendChild(square);
+    }
+  }
+  turnText.innerText = `Turn: ${turn}`;
+}
 //Player filling in the squares
 gameBoard.addEventListener('click',fillInSquare);
 function fillInSquare(event){
-    const target = event.target;
-    console.log(target.innerText);
-    if (target.innerText === '' && gameWon===false){
-        const tempSquarePosition = target.id;
-        target.innerText = playerAssignment;
-        turn++;
-        let arraySplit = tempSquarePosition.split("");
-        gameState.board[parseInt(arraySplit[0])][parseInt(arraySplit[1])] = playerAssignment;
-        evalWinCondition();
-        changePlayers();
+  const target = event.target;
+  if (target.innerText === '' && gameWon===false){
+    if (turn===1){
+      playerAssignment = 'X';
     }
-    else if ((target.innerText === 'X' || target.innerText === 'O') && gameWon ===false){
-        window.alert("The square is already filled in!");
+    const tempSquarePosition = target.id;
+    target.innerText = playerAssignment;
+    let arraySplit = tempSquarePosition.split("");
+    gameState.board[parseInt(arraySplit[0])][parseInt(arraySplit[1])] = playerAssignment;
+    evalWinCondition();
+    changePlayers();
+    if (gameWon !== true){
+      turn++;
+      turnText.innerText = `Turn: ${turn}`;
     }
+  }
+  else if ((target.innerText === 'X' || target.innerText === 'O') && gameWon ===false){
+      window.alert("The square is already filled in!");
+  }
 }
-
 function changePlayers(){
   if (playerAssignment === 'X'){
     playerAssignment = 'O';
@@ -237,16 +245,30 @@ function evalWinCondition(){
     dial.show();
   }
 }
-
-playAgainButton.addEventListener("click",()=>{
+function resetBoard(){
   gameState.board = [];
   const squares = document.getElementsByClassName("box");
   while(squares.length > 0){
     squares[0].parentNode.removeChild(squares[0]);
   }
+}
+
+playAgainButton.addEventListener("click",()=>{
+  resetBoard();
   assignPlayerRole();
   p1Display.innerText = players[0].name + ' - ' + players[0].symbol;
   p2Display.innerText = players[1].name + ' - ' + players[1].symbol;
-  makeBoard();
+  turn = 1;
   gameWon = false;
+  makeBoard();
+});
+
+resetButton.addEventListener("click",(event)=>{
+  resetBoard();
+  document.querySelector(".player-container").style.display = '';
+  document.querySelector(".board").style.display = 'none';
+  document.querySelector(".player-position").style.display = 'none';
+  document.querySelector(".scores").style.display = 'none';
+  gameWon = false;
+  turn = 1;
 });
