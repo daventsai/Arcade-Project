@@ -38,18 +38,18 @@ playerSelector1.addEventListener('click',gameSetup);
 playerSelector2.addEventListener('click',gameSetup);
 
 function gameSetup(event){
-  singlePlayerMode = false;
   assignPlayerRole();
   promptPlayer(event);
   askSize();
-  if (event.id = 'P1'){
-    singlePlayerMode = true;
-  }
   document.querySelector(".player-container").style.display = 'none';
   gameBoard.style.display = 'grid';
   document.querySelector(".player-position").style.display = 'flex';
   document.querySelector(".scores").style.display = 'flex';
   turnInfo.style.display = 'flex';
+  checkCompTurn();
+  console.log('player Assignment: ',playerAssignment);
+  console.log('player symbol : ',players[1].symbol);
+  console.log('single player mode: ',singlePlayerMode);
 }
 function assignPlayerRole(){
   playerAssignment = gameState.players[Math.floor(Math.random()*2)];
@@ -60,15 +60,18 @@ function assignPlayerRole(){
   else{
     players[1].symbol = 'X';
   }
+  playerAssignment = 'X';
 }
 function promptPlayer(event){
   if (event.target.id === "P1"){
     players[0].name = prompt("What is Player 1's name?");
     players[1].name = "Computer";
+    singlePlayerMode = true;
   }
   else{
     players[0].name = prompt("What is Player 1's name?");
     players[1].name = prompt("What is Player 2's name?");
+    singlePlayerMode = false;
   }
   players[0].wins = 0;
   players[1].wins = 0;
@@ -100,7 +103,7 @@ function makeBoard(){
     for (let j=0;j<gameState.board.length;j++){
       const square = document.createElement("div");
       square.className ='box';
-      square.id = `${i}${j}`;
+      square.id = `${i}-${j}`;
       gameBoard.appendChild(square);
     }
   }
@@ -118,12 +121,9 @@ function fillInSquare(event){
   if ((singlePlayerMode === true && players[0].symbol === playerAssignment)||singlePlayerMode === false){
     const target = event.target;
     if (target.innerText === '' && gameWon===false){
-      if (turn===1){
-        playerAssignment = 'X';
-      }
       const tempSquarePosition = target.id;
       target.innerText = playerAssignment;
-      let arraySplit = tempSquarePosition.split("");
+      let arraySplit = tempSquarePosition.split("-");
       gameState.board[parseInt(arraySplit[0])][parseInt(arraySplit[1])] = playerAssignment;
       evalWinCondition();
       changePlayers();
@@ -136,6 +136,7 @@ function fillInSquare(event){
         window.alert("The square is already filled in!");
     }
   }
+  checkCompTurn();
 }
 function changePlayers(){
   if (gameWon !== true){
@@ -285,6 +286,7 @@ playAgainButton.addEventListener("click",()=>{
   turn = 1;
   gameWon = false;
   makeBoard();
+  checkCompTurn();
 });
 
 resetButton.addEventListener("click",(event)=>{
@@ -296,6 +298,39 @@ resetButton.addEventListener("click",(event)=>{
   turnInfo.style.display = 'none';
   gameWon = false;
   turn = 1;
+  checkCompTurn();
 });
 
 //Computer Logic
+function compTurn(){
+  let boardLen = gameState.board.length;
+  const emptySpaceMap = new Map();
+  let key = 0;
+  for (let i=0;i<boardLen;i++){
+    for (let j=0;j<boardLen;j++){
+      if (gameState.board[i][j]===null){
+        emptySpaceMap.set(key,`${i}-${j}`);
+        key++;
+      }
+    }
+  }
+  if (key > 0){
+    const randChoice = Math.floor(Math.random()*key);
+    let mapSplit = emptySpaceMap.get(randChoice).split("-");
+    console.log(mapSplit);
+    gameState.board[parseInt(mapSplit[0])][parseInt(mapSplit[1])] = playerAssignment;
+    document.getElementById(`${emptySpaceMap.get(randChoice)}`).innerText = playerAssignment;
+    evalWinCondition();
+    changePlayers();
+    if (gameWon !== true){
+      turn++;
+      turnText.innerText = `Turn: ${turn}`;
+    }
+  }
+}
+
+function checkCompTurn(){
+  if (playerAssignment === players[1].symbol && singlePlayerMode === true){
+    compTurn();
+  }
+}
