@@ -30,6 +30,7 @@ const players = [
     symbol: ''
   }
 ]
+let singlePlayerMode;
 gameDisplay.innerText = 'Tic Tac Toe';
 const playerSelector1 = document.querySelector('#P1');
 const playerSelector2 = document.querySelector('#P2');
@@ -37,9 +38,13 @@ playerSelector1.addEventListener('click',gameSetup);
 playerSelector2.addEventListener('click',gameSetup);
 
 function gameSetup(event){
+  singlePlayerMode = false;
   assignPlayerRole();
   promptPlayer(event);
   askSize();
+  if (event.id = 'P1'){
+    singlePlayerMode = true;
+  }
   document.querySelector(".player-container").style.display = 'none';
   gameBoard.style.display = 'grid';
   document.querySelector(".player-position").style.display = 'flex';
@@ -110,24 +115,26 @@ function makeBoard(){
 //Player filling in the squares
 gameBoard.addEventListener('click',fillInSquare);
 function fillInSquare(event){
-  const target = event.target;
-  if (target.innerText === '' && gameWon===false){
-    if (turn===1){
-      playerAssignment = 'X';
+  if ((singlePlayerMode === true && players[0].symbol === playerAssignment)||singlePlayerMode === false){
+    const target = event.target;
+    if (target.innerText === '' && gameWon===false){
+      if (turn===1){
+        playerAssignment = 'X';
+      }
+      const tempSquarePosition = target.id;
+      target.innerText = playerAssignment;
+      let arraySplit = tempSquarePosition.split("");
+      gameState.board[parseInt(arraySplit[0])][parseInt(arraySplit[1])] = playerAssignment;
+      evalWinCondition();
+      changePlayers();
+      if (gameWon !== true){
+        turn++;
+        turnText.innerText = `Turn: ${turn}`;
+      }
     }
-    const tempSquarePosition = target.id;
-    target.innerText = playerAssignment;
-    let arraySplit = tempSquarePosition.split("");
-    gameState.board[parseInt(arraySplit[0])][parseInt(arraySplit[1])] = playerAssignment;
-    evalWinCondition();
-    changePlayers();
-    if (gameWon !== true){
-      turn++;
-      turnText.innerText = `Turn: ${turn}`;
+    else if ((target.innerText === 'X' || target.innerText === 'O') && gameWon ===false){
+        window.alert("The square is already filled in!");
     }
-  }
-  else if ((target.innerText === 'X' || target.innerText === 'O') && gameWon ===false){
-      window.alert("The square is already filled in!");
   }
 }
 function changePlayers(){
@@ -290,3 +297,5 @@ resetButton.addEventListener("click",(event)=>{
   gameWon = false;
   turn = 1;
 });
+
+//Computer Logic
