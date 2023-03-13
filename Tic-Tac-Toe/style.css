@@ -78,9 +78,9 @@ body{
     margin-right: 1rem;
 }
 .under-board{
-    display: flex;
+    display: none;
     justify-content: space-between;
-    width: 40%;
+    width: 100%;
 }
 .under-board *{
     color: white;

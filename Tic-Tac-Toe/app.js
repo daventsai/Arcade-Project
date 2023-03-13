@@ -7,7 +7,9 @@ const p2Score = document.querySelector('.p2-score');
 const dial = document.querySelector('.pop-up');
 const playAgainButton = document.querySelector('#playAgain');
 const resetButton = document.querySelector('#reset');
+const turnInfo = document.querySelector('.under-board');
 const turnText = document.querySelector('.turn');
+const yourTurnText = document.querySelector('.your-move');
 let boardSize;
 let turn = 1;
 let playerAssignment = '';
@@ -39,9 +41,10 @@ function gameSetup(event){
   promptPlayer(event);
   askSize();
   document.querySelector(".player-container").style.display = 'none';
-  document.querySelector(".board").style.display = 'grid';
+  gameBoard.style.display = 'grid';
   document.querySelector(".player-position").style.display = 'flex';
   document.querySelector(".scores").style.display = 'flex';
+  turnInfo.style.display = 'flex';
 }
 function assignPlayerRole(){
   playerAssignment = gameState.players[Math.floor(Math.random()*2)];
@@ -97,6 +100,12 @@ function makeBoard(){
     }
   }
   turnText.innerText = `Turn: ${turn}`;
+  if (players[0].symbol === 'X' && playerAssignment ==='X'){
+    yourTurnText.innerText = `${players[0].name}, it is your move`;
+  }
+  else{
+    yourTurnText.innerText = `${players[1].name}, it is your move`;
+  }
 }
 //Player filling in the squares
 gameBoard.addEventListener('click',fillInSquare);
@@ -122,11 +131,19 @@ function fillInSquare(event){
   }
 }
 function changePlayers(){
-  if (playerAssignment === 'X'){
-    playerAssignment = 'O';
-  }
-  else if (playerAssignment === 'O'){
-    playerAssignment = 'X';
+  if (gameWon !== true){
+    if (playerAssignment === 'X'){
+      playerAssignment = 'O';
+    }
+    else if (playerAssignment === 'O'){
+      playerAssignment = 'X';
+    }
+    if (players[0].symbol ===playerAssignment){
+      yourTurnText.innerText = `${players[0].name}, it is your move`;
+    }
+    else{
+      yourTurnText.innerText = `${players[1].name}, it is your move`;
+    }
   }
 }
 
@@ -266,9 +283,10 @@ playAgainButton.addEventListener("click",()=>{
 resetButton.addEventListener("click",(event)=>{
   resetBoard();
   document.querySelector(".player-container").style.display = '';
-  document.querySelector(".board").style.display = 'none';
+  gameBoard.style.display = 'none';
   document.querySelector(".player-position").style.display = 'none';
   document.querySelector(".scores").style.display = 'none';
+  turnInfo.style.display = 'none';
   gameWon = false;
   turn = 1;
 });
