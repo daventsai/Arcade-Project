@@ -31,6 +31,7 @@ const players = [
   }
 ]
 let singlePlayerMode;
+let compTurnPause = false;
 gameDisplay.innerText = 'Tic Tac Toe';
 const playerSelector1 = document.querySelector('#P1');
 const playerSelector2 = document.querySelector('#P2');
@@ -127,7 +128,7 @@ function makeBoard(){
 //Player filling in the squares
 gameBoard.addEventListener('click',fillInSquare);
 function fillInSquare(event){
-  if ((singlePlayerMode === true && players[0].symbol === playerAssignment)||singlePlayerMode === false){
+  if (((singlePlayerMode === true && players[0].symbol === playerAssignment)||singlePlayerMode === false) && compTurnPause === false){
     const target = event.target;
     if (target.innerText === '' && gameWon===false){
       const tempSquarePosition = target.id;
@@ -142,7 +143,12 @@ function fillInSquare(event){
       }
     }
     else if ((target.innerText === 'X' || target.innerText === 'O') && gameWon ===false){
-        window.alert("The square is already filled in!");
+      target.classList.add('animate');
+      target.addEventListener('animationend',(event)=>{
+        if (event.animationName === 'shake'){
+          target.classList.remove('animate');
+        }
+      });
     }
   }
   checkCompTurn();
@@ -315,33 +321,37 @@ function resetAll(){
 
 //Computer Logic
 function compTurn(){
-  let boardLen = gameState.board.length;
-  const emptySpaceMap = new Map();
-  let key = 0;
-  for (let i=0;i<boardLen;i++){
-    for (let j=0;j<boardLen;j++){
-      if (gameState.board[i][j]===null){
-        emptySpaceMap.set(key,`${i}-${j}`);
-        key++;
+  compTurnPause = true;
+  setTimeout(()=>{
+    let boardLen = gameState.board.length;
+    const emptySpaceMap = new Map();
+    let key = 0;
+    for (let i=0;i<boardLen;i++){
+      for (let j=0;j<boardLen;j++){
+        if (gameState.board[i][j]===null){
+          emptySpaceMap.set(key,`${i}-${j}`);
+          key++;
+        }
       }
     }
-  }
-  if (key > 0){
-    const randChoice = Math.floor(Math.random()*key);
-    let mapSplit = emptySpaceMap.get(randChoice).split("-");
-    console.log(mapSplit);
-    gameState.board[parseInt(mapSplit[0])][parseInt(mapSplit[1])] = playerAssignment;
-    document.getElementById(`${emptySpaceMap.get(randChoice)}`).innerText = playerAssignment;
-    evalWinCondition();
-    changePlayers();
-    if (gameWon !== true){
-      turn++;
-      turnText.innerText = `Turn: ${turn}`;
+    if (key > 0){
+      const randChoice = Math.floor(Math.random()*key);
+      let mapSplit = emptySpaceMap.get(randChoice).split("-");
+      console.log(mapSplit);
+      gameState.board[parseInt(mapSplit[0])][parseInt(mapSplit[1])] = playerAssignment;
+      document.getElementById(`${emptySpaceMap.get(randChoice)}`).innerText = playerAssignment;
+      evalWinCondition();
+      changePlayers();
+      if (gameWon !== true){
+        turn++;
+        turnText.innerText = `Turn: ${turn}`;
+      }
     }
-  }
+    compTurnPause = false;
+  },500);
 }
 function checkCompTurn(){
-  if (playerAssignment === players[1].symbol && singlePlayerMode === true){
+  if (playerAssignment === players[1].symbol && singlePlayerMode === true && compTurnPause === false){
     compTurn();
   }
 }
