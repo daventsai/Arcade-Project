@@ -47,9 +47,9 @@ function gameSetup(event){
   document.querySelector(".scores").style.display = 'flex';
   turnInfo.style.display = 'flex';
   checkCompTurn();
-  console.log('player Assignment: ',playerAssignment);
-  console.log('player symbol : ',players[1].symbol);
-  console.log('single player mode: ',singlePlayerMode);
+  if (players[0].name === null||players[1].name === null||boardSize===null){
+    resetAll();
+  }
 }
 function assignPlayerRole(){
   playerAssignment = gameState.players[Math.floor(Math.random()*2)];
@@ -70,7 +70,9 @@ function promptPlayer(event){
   }
   else{
     players[0].name = prompt("What is Player 1's name?");
-    players[1].name = prompt("What is Player 2's name?");
+    if (players[0].name !== null){
+      players[1].name = prompt("What is Player 2's name?");
+    }
     singlePlayerMode = false;
   }
   players[0].wins = 0;
@@ -83,7 +85,13 @@ function promptPlayer(event){
 function askSize(){
   let correctSize = false;
   do{
-    boardSize = prompt("What board size board would you like (enter a whole number)?");
+    if (players[0].name !== null && players[1].name !== null){
+      boardSize = prompt("What board size board would you like (enter a whole number)?");
+    }
+    else{
+      resetAll();
+      break;
+    }
     if (!isNaN(boardSize)){
       correctSize = true;
       break;
@@ -104,6 +112,7 @@ function makeBoard(){
       const square = document.createElement("div");
       square.className ='box';
       square.id = `${i}-${j}`;
+      square.style.fontSize = (280/gameState.board.length)+'px'
       gameBoard.appendChild(square);
     }
   }
@@ -290,6 +299,10 @@ playAgainButton.addEventListener("click",()=>{
 });
 
 resetButton.addEventListener("click",(event)=>{
+  resetAll();
+});
+
+function resetAll(){
   resetBoard();
   document.querySelector(".player-container").style.display = '';
   gameBoard.style.display = 'none';
@@ -298,8 +311,7 @@ resetButton.addEventListener("click",(event)=>{
   turnInfo.style.display = 'none';
   gameWon = false;
   turn = 1;
-  checkCompTurn();
-});
+}
 
 //Computer Logic
 function compTurn(){
@@ -328,7 +340,6 @@ function compTurn(){
     }
   }
 }
-
 function checkCompTurn(){
   if (playerAssignment === players[1].symbol && singlePlayerMode === true){
     compTurn();

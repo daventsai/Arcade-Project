@@ -40,14 +40,14 @@ body{
 .board{
     display: none;
     background-color: rgb(51, 56, 67);
-    height: 500px;
-    width: 500px;
+    height: 600px;
+    width: 600px;
     margin:1rem;
 }
 .box{
     display:flex;
     border: 5px solid rgb(33, 37, 43);
-    font-size: 80px;
+    font-family: 'Silkscreen', cursive;
     justify-content: center;
     align-items: center;
     color: white;
