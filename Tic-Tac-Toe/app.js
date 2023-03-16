@@ -323,36 +323,9 @@ function resetAll(){
 function compTurn(){
   let decision;
   compTurnPause = true;
-  //for testing complex AI
-  //compAI();
-
   //for randomized comp AI selection
   setTimeout(()=>{
     compAI();
-    // let boardLen = gameState.board.length;
-    // const emptySpaceMap = new Map();
-    // let key = 0;
-    // for (let i=0;i<boardLen;i++){
-    //   for (let j=0;j<boardLen;j++){
-    //     if (gameState.board[i][j]===null){
-    //       emptySpaceMap.set(key,`${i}-${j}`);
-    //       key++;
-    //     }
-    //   }
-    // }
-    // if (key > 0){
-    //   const randChoice = Math.floor(Math.random()*key);
-    //   let mapSplit = emptySpaceMap.get(randChoice).split("-");
-    //   console.log(mapSplit);
-    //   gameState.board[parseInt(mapSplit[0])][parseInt(mapSplit[1])] = playerAssignment;
-    //   document.getElementById(`${emptySpaceMap.get(randChoice)}`).innerText = playerAssignment;
-    //   evalWinCondition();
-    //   changePlayers();
-    //   if (gameWon !== true){
-    //     turn++;
-    //     turnText.innerText = `Turn: ${turn}`;
-    //   }
-    // }
     compTurnPause = false;
   },500);
 }
@@ -378,17 +351,41 @@ function compAI(){
     let rowCalc = 0;
     //checks future outcome probability for winning
     for (let j=0;j<tempBoard.length;j++){
+      let onlySameSymbol = true;
+      let symbolStorage = [];
       if (tempBoard[i][j]===players[1].symbol){
-        rowCalc++;
+        symbolStorage.push(tempBoard[i][j]);
+        if (symbolStorage.length > 1){
+          for (let k=1;k<symbolStorage.length;k++){
+            if (symbolStorage[k-1] !== symbolStorage[k]){
+              onlySameSymbol = false;
+              continue;
+            }
+          }
+        }
+        if (onlySameSymbol ===true){
+          rowCalc++;
+        }
       }
       else if (tempBoard[i][j]===players[0].symbol){
-        rowCalc--;
+        symbolStorage.push(tempBoard[i][j]);
+        if (symbolStorage.length > 1){
+          for (let k=1;k<symbolStorage.length;k++){
+            if (symbolStorage[k-1] !== symbolStorage[k]){
+              onlySameSymbol = false;
+              continue;
+            }
+          }
+        }
+        if (onlySameSymbol ===true){
+          rowCalc--;
+        }
       }
       if (tempBoard[i][j]===null){
         randoDecision.push(`${i}-${j}`);
       }
       //does math check for probability for winning and assigns a weight for which to push
-      if (rowCalc<0 && ((((rowCalc*-1)/tempBoard.length)*100)>=35 || ((rowCalc/tempBoard.length)*100)>=35)){
+      if (rowCalc<0 && ((((rowCalc*-1)/tempBoard.length)*100)>=30 || ((rowCalc/tempBoard.length)*100)>=30)){
         for (let k=0;k<tempBoard.length;k++){
           if (tempBoard[i][k]===null){
             possibleDecisionLv1.push(`${i}-${k}`);
@@ -423,17 +420,41 @@ function compAI(){
     let colCalc = 0;
     //checks future outcome probability for winning
     for (let j=0;j<tempBoard.length;j++){
+      let onlySameSymbol = true;
+      let symbolStorage = [];
       if (tempBoard[j][i]===players[1].symbol){
-        colCalc++;
+        symbolStorage.push(tempBoard[j][i]);
+        if (symbolStorage.length > 1){
+          for (let k=1;k<symbolStorage.length;k++){
+            if (symbolStorage[k-1] !== symbolStorage[k]){
+              onlySameSymbol = false;
+              continue;
+            }
+          }
+        }
+        if (onlySameSymbol ===true){
+          colCalc++;
+        }
       }
       else if (tempBoard[j][i]===players[0].symbol){
-        colCalc--;
+        symbolStorage.push(tempBoard[j][i]);
+        if (symbolStorage.length > 1){
+          for (let k=1;k<symbolStorage.length;k++){
+            if (symbolStorage[k-1] !== symbolStorage[k]){
+              onlySameSymbol = false;
+              continue;
+            }
+          }
+        }
+        if (onlySameSymbol ===true){
+          colCalc--;
+        }
       }
       if (tempBoard[j][i]===null){
         randoDecision.push(`${j}-${i}`);
       }
       //does math check for probability for winning and assigns a weight for which to push
-      if (colCalc<0 && ((((colCalc*-1)/tempBoard.length)*100)>=35 || ((colCalc/tempBoard.length)*100)>=35)){
+      if (colCalc<0 && ((((colCalc*-1)/tempBoard.length)*100)>=30 || ((colCalc/tempBoard.length)*100)>=30)){
         for (let k=0;k<tempBoard.length;k++){
           if (tempBoard[k][i]===null){
             possibleDecisionLv1.push(`${k}-${i}`);
@@ -493,56 +514,28 @@ function compAI(){
         randoDecision.push(`${i}-${j}`);
       }
       //does math check for probability for winning and assigns a weight for which to push
-      if (diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=35 || ((diagCalc1/tempBoard.length)*100)>=35)){
+      if ((diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=30 || ((diagCalc1/tempBoard.length)*100)>=30))||diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=30 || ((diagCalc2/tempBoard.length)*100)>=30)){
         for (let k=0;k<tempBoard.length;k++){
           if (tempBoard[i][k]===null){
             possibleDecisionLv1.push(`${i}-${k}`);
           }
         }
       }
-      if (diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=45|| ((diagCalc1/tempBoard.length)*100)>=45)){
+      if ((diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=45|| ((diagCalc1/tempBoard.length)*100)>=45))||diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=45|| ((diagCalc2/tempBoard.length)*100)>=45)){
         for (let k=0;k<tempBoard.length;k++){
           if (tempBoard[i][k]===null){
             possibleDecisionLv2.push(`${i}-${k}`);
           }
         }
       }
-      if (diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=60|| ((diagCalc1/tempBoard.length)*100)>=60)){
+      if ((diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=60|| ((diagCalc1/tempBoard.length)*100)>=60))||diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=60|| ((diagCalc2/tempBoard.length)*100)>=60)){
         for (let k=0;k<tempBoard.length;k++){
           if (tempBoard[i][k]===null){
             possibleDecisionLv3.push(`${i}-${k}`);
           }
         }
       }
-      if (diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=75|| ((diagCalc1/tempBoard.length)*100)>=75)){
-        for (let k=0;k<tempBoard.length;k++){
-          if (tempBoard[i][k]===null){
-            possibleDecisionLv4.push(`${i}-${k}`);
-          }
-        }
-      }
-      if (diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=35 || ((diagCalc2/tempBoard.length)*100)>=35)){
-        for (let k=0;k<tempBoard.length;k++){
-          if (tempBoard[i][k]===null){
-            possibleDecisionLv1.push(`${i}-${k}`);
-          }
-        }
-      }
-      if (diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=45|| ((diagCalc2/tempBoard.length)*100)>=45)){
-        for (let k=0;k<tempBoard.length;k++){
-          if (tempBoard[i][k]===null){
-            possibleDecisionLv2.push(`${i}-${k}`);
-          }
-        }
-      }
-      if (diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=60|| ((diagCalc2/tempBoard.length)*100)>=60)){
-        for (let k=0;k<tempBoard.length;k++){
-          if (tempBoard[i][k]===null){
-            possibleDecisionLv3.push(`${i}-${k}`);
-          }
-        }
-      }
-      if (diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=75|| ((diagCalc2/tempBoard.length)*100)>=75)){
+      if ((diagCalc1<0 && ((((diagCalc1*-1)/tempBoard.length)*100)>=75|| ((diagCalc1/tempBoard.length)*100)>=75))||diagCalc2<0 && ((((diagCalc2*-1)/tempBoard.length)*100)>=75|| ((diagCalc2/tempBoard.length)*100)>=75)){
         for (let k=0;k<tempBoard.length;k++){
           if (tempBoard[i][k]===null){
             possibleDecisionLv4.push(`${i}-${k}`);
